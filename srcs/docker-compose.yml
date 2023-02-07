@@ -1,0 +1,40 @@
+version: "3.3"
+services:
+  nginx:
+    build: ./requirements/nginx
+    restart: always
+    ports:
+      - "443:443"
+    networks:
+      - docker-network
+    volumes:
+      - wordpress:/home/ldurieux/data
+  mariadb:
+    build: ./requirements/mariadb
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    networks:
+      - docker-network
+    volumes:
+      - db:/home/ldurieux/data
+  wordpress:
+    build: ./requirements/wordpress
+    restart: always
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    networks:
+      - docker-network
+    volumes:
+      - wordpress:/home/ldurieux/data
+networks:
+  docker-network:
+    driver: bridge
+volumes:
+  wordpress:
+  db:
